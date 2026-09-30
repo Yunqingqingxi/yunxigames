@@ -249,6 +249,7 @@ cd mobkit && JAVA_HOME='D:\Java\jdk-25' ./gradlew shot --offline
 | 实体标签存在性 | `EntityType` 静态常量（`LIGHTNING_BOLT` 等） | `BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse("minecraft:…"))` |
 | 掉落物生成 | 手动 `new ItemEntity` 后忘了延迟 | `setDefaultPickUpDelay()`；磁石类功能用 `hasPickUpDelay()` 豁免玩家丢弃 |
 | 给所有生物挂自定义 AI Goal | mixin 进 `registerGoals`（僵尸等大量生物覆写它且**不调 super**，基类方法体是空的、被虚调用短路，注入基类方法整类漏掉） | mixin 进 `Mob` **构造器 `<init>` TAIL**（只有一个构造器、必然执行，此时原版目标已注册完，追加不抢时序；yg-faces 验证过） |
+| 给任意 Mob 挂 `TemptGoal` | 直接 `goalSelector.addGoal(new TemptGoal(...))`（26.2 的 `canUse` 逐刻读 `tempt_range` 属性，只有带诱惑 AI 的动物有它，鱿鱼/蝙蝠/铁傀儡等非动物 PathfinderMob 没有属性表项 → 第一个 AI 刻 `IllegalArgumentException` 崩服） | 先守卫 `mob.getAttribute(Attributes.TEMPT_RANGE) != null` 再注册（yg-faces v1.0.1 崩服事故） |
 | 给玩家一个速度冲量（撑杆跳 / 击退式位移） | 只 `setDeltaMovement(...)` 就指望客户端跟上 | 再置 `hurtMarked = true` —— 广播 `ClientboundSetEntityMotionPacket` 的是 `ServerEntity#sendChanges()`，**不在 `ServerPlayer`/`ServerGamePacketListenerImpl` 里**（在那儿搜不到不代表机制不存在） |
 | 读玩家这一 tick 的位移（助跑速度） | `player.getDeltaMovement()`（服务端手上这份基本是空的） | `ServerPlayer#getKnownMovement()`（客户端上报的位移） |
 | 让附魔/物品只认某一种物品 | 指望铁砧拦（原版铁砧对附魔书**不做**兼容性检查） | 附魔 JSON 的 `supported_items` 指向自定义 tag（`data/<ns>/tags/item/<name>.json`），运行期再判一次物品；自检用 `Enchantment#canEnchant(ItemStack)` 正面钉死 |
