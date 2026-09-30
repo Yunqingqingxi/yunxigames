@@ -1,6 +1,6 @@
 # yunxigames — Minecraft 26.2 玩法包系列
 
-**一个系列，六个玩法包，六份 jar**。每个包自包含、按需安装 —— 装哪个玩哪个，包与包之间**零硬依赖**。
+**一个系列，七个玩法包，七份 jar**。每个包自包含、按需安装 —— 装哪个玩哪个，包与包之间**零硬依赖**。
 
 每个玩法包是**一个完全独立的 GitHub 仓库**：自带构建脚本、独立版本号、CHANGELOG 与 GitHub Release。
 克隆哪个就构建哪个 —— `cd <仓库> && ./gradlew build`；mod id / jar 名 / 配置文件跨仓库保持稳定。
@@ -14,12 +14,13 @@
 | **Bingo** | [yg-bingo](https://github.com/Yunqingqingxi/yg-bingo) | `yg-bingo-<版本>.jar` / `yg_bingo` | [README](https://github.com/Yunqingqingxi/yg-bingo) | 物品 / 击杀双板集卡，5×5 板画在地图上，连线发奖 |
 | **更多生物** | [yg-more-mobs](https://github.com/Yunqingqingxi/yg-more-mobs) | `yg-mobs-<版本>.jar` / `yg_mobs` | [README](https://github.com/Yunqingqingxi/yg-more-mobs) | 「苦力怕幻翼」—— 幻翼的翅膀 / 尾巴 / 飞行姿态全保留，头与躯干换成苦力怕，俯冲命中爆炸 + 自定义俯冲音效 |
 | **随机换位** | [yg-random-swap](https://github.com/Yunqingqingxi/yg-random-swap) | `yg-swap-<版本>.jar` / `yg_swap` | [README](https://github.com/Yunqingqingxi/yg-random-swap) | 受伤随机互换位置：**玩家掉血就直接**与附近随机活体（生物或玩家）瞬间互换，无概率无来源判定，自带落点保护与黑名单 |
+| **变脸** | [yg-faces](https://github.com/Yunqingqingxi/yg-faces) | `yg-faces-<版本>.jar` / `yg_faces` | [README](https://github.com/Yunqingqingxi/yg-faces) | 生物对玩家的态度由玩家主手实时决定：拿武器全场掉头就跑，拿某生物的美食该生物不攻击还被诱惑跟着走（逐物种），空手/拿错东西被全场围殴（友好生物也装上攻击能力） |
 
 每包自带：
 
 - **一份独立配置** —— `config/yg-<包名>.json`（装哪个包就只生成哪份配置，互不干扰）；
 - **一套独立自检** —— 见各包文档的「自检」一节；
-- **自己的入口与基础库副本** —— 六包同名类各持一份，因此可以单独安装、任意组合；
+- **自己的入口与基础库副本** —— 七包同名类各持一份，因此可以单独安装、任意组合；
 - **自己的完整 gradle 构建** —— 独立 `settings.gradle` / `build.gradle` / `gradle.properties` / wrapper；
 - **自己的 CHANGELOG 与 Release** —— 版本历史与 jar 下载都在各自仓库的 Releases 页。
 
@@ -124,6 +125,7 @@ cd mobkit
 
 | 版本 | 变化 |
 | --- | --- |
+| **新包：变脸（2026-09-30）** | **第七个玩法包 [yg-faces](https://github.com/Yunqingqingxi/yg-faces) v1.0.0 发布**：生物对玩家的态度由玩家主手实时决定 —— 拿战斗用品（剑/斧/矛/三叉戟/重锤/弓/弩）全场生物掉头就跑，拿某生物的美食该生物不攻击还被诱惑跟着走（逐物种豁免），其他任何东西（含空手）所有生物都尝试攻击玩家（**友好生物也装上了攻击能力**）。注入点挂 `Mob` 构造器尾部（`registerGoals` 会被子类覆写短路，这个坑记进了 AGENTS §7） |
 | **仓库拆分（2026-09-30）** | **一个仓库拆成六个独立 GitHub 仓库**（`yg-random-drops` / `yg-more-enchants` / `yg-world-events` / `yg-bingo` / `yg-more-mobs` / `yg-random-swap`），全新历史、分支仍为 `26.2`；本仓库只留系列文档；确立**向后兼容承诺**（mod id / 配置文件名永不改，配置字段只增不删，删字段 / 改默认行为升 major，各仓库带 CHANGELOG + GitHub Release）；多 MC 版本支持按「分支跟随 MC 版本」规划中。更早历史见归档仓库 [random-drops](https://github.com/Yunqingqingxi/random-drops) |
 | **yg-swap 2.0.0** | **掉血直接换**：删掉全部触发判定（概率掷骰 / 伤害来源白名单 / 生物触发开关）—— 玩家掉血就直接与附近随机活体（生物或玩家）互换；附近没有可交换对象时限频提示；配置删除 `hurtSwapChance` / `hurtSwapMobsCanTrigger`（老配置残留字段静默忽略） |
 | **yg-enchants 1.3.0** | 蓝银撑杆跳两处修正：**① 水平动量也吃蓄力** —— 立杆时的助跑动量是下限，蓄 1 秒（`poleVaultHorizontalChargeSeconds`）就顶到 `poleVaultHorizontalSpeed`（默认 0.5 格/刻 ≈ 10 m/s，约疾跑的 1.8 倍），撑杆跳终于是「飞出去一段」而不是原地弹高；**② 修「连树叶都顶不破」** —— 旧判定是「碰撞体积为空就直接放行」，而树叶恰恰没有碰撞体积，判定压根走不到「能不能顶碎」；现在顺序反转为「先问能不能顶碎 → 顶不碎才谈挡不挡路」，且穿过去但没碎的方块会**记账**，蓄力跨过 6 秒 / 30 秒档位后**回头补碎**（否则杆长过去就不再回头看它） |

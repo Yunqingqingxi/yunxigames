@@ -7,7 +7,7 @@
 
 ## 1. 项目概览
 
-**yunxigames** 是 Minecraft 26.2 的 Fabric **玩法包系列**：**六个完全独立的 GitHub 仓库**、六份 jar。
+**yunxigames** 是 Minecraft 26.2 的 Fabric **玩法包系列**：**七个完全独立的 GitHub 仓库**、七份 jar。
 每个项目**自包含**（同名基础类各持一份源码副本）、零跨包依赖，可单独安装、任意组合；
 每个项目有自己的 `settings.gradle` / `build.gradle` / `gradle.properties`（**独立版本号**）/ gradle wrapper，
 克隆哪个仓库就 `cd <仓库> && ./gradlew build` 单独构建，互不影响。
@@ -23,6 +23,7 @@
 | Bingo | [yg-bingo](https://github.com/Yunqingqingxi/yg-bingo) | `yg_bingo` | `yg-bingo` | `config/yg-bingo.json` | 物品 / 击杀双板集卡，5×5 板画在地图上，连线发奖 |
 | 更多生物 | [yg-more-mobs](https://github.com/Yunqingqingxi/yg-more-mobs) | `yg_mobs` | `yg-mobs` | `config/yg-mobs.json` | 「苦力怕幻翼」：幻翼保留原生翅膀 / 尾巴 / 飞行姿态 / 眼睛层，头与躯干换成苦力怕；俯冲命中爆炸 + 俯冲开始播自定义音效 |
 | 随机换位 | [yg-random-swap](https://github.com/Yunqingqingxi/yg-random-swap) | `yg_swap` | `yg-swap` | `config/yg-swap.json` | 受伤随机互换位置：**玩家掉血就直接**与附近随机活体（生物或其他玩家）互换，无概率无来源判定；落点保护（岩浆/火跳过、清摔落、排除骑乘/盔甲架/Boss 黑名单），AFTER_DAMAGE 事件、零状态 |
+| 变脸 | [yg-faces](https://github.com/Yunqingqingxi/yg-faces) | `yg_faces` | `yg-faces` | `config/yg-faces.json` | 生物对玩家的态度由玩家主手实时决定：拿战斗用品（剑/斧/矛/三叉戟/重锤/弓/弩）全场掉头就跑，拿某生物的美食该生物不攻击还被诱惑跟着走（逐物种），其他任何东西（含空手）所有生物尝试攻击玩家（友好生物也装上攻击能力）；Mob 构造器注入、态度是主手物品的纯函数、零状态 |
 
 - **本仓库不是 gradle 构建**：没有 `gradlew`，任何构建命令都在各 mod 仓库里跑。
 - **`yg-more-mobs` 里的 `mobkit/`**：生物外观预览工具（开发期专用，不发布）。它是**另一个独立 gradle 构建**
@@ -102,8 +103,8 @@ git checkout 26.2
 ```
 
 ```bash
-# ⚠️ 六个 mod 仓库互相独立，所有 gradle 命令都在对应仓库根目录跑：
-cd yg-random-drops    # 或 yg-more-enchants / yg-world-events / yg-bingo / yg-more-mobs / yg-random-swap
+# ⚠️ 七个 mod 仓库互相独立，所有 gradle 命令都在对应仓库根目录跑：
+cd yg-random-drops    # 或 yg-more-enchants / yg-world-events / yg-bingo / yg-more-mobs / yg-random-swap / yg-faces
 
 # 编译检查（开发期每个功能写完就跑，~20 秒）
 ./gradlew compileJava --offline
@@ -136,9 +137,9 @@ cd mobkit && JAVA_HOME='D:\Java\jdk-25' ./gradlew shot --offline
 ## 4. 架构导览（改代码前先找到对应类）
 
 **每个包都是「入口 + 各功能一个类 + 自己的配置 + 自己的自检」**，
-基础类（`Yg` / `YgConfig` / `SelfTest` / `SessionStats` / `LootSupply`）在六个包里**各有一份副本**
+基础类（`Yg` / `YgConfig` / `SelfTest` / `SessionStats` / `LootSupply`）在七个包里**各有一份副本**
 （都在 `com.yunxigames` 包下，同名类各 jar 一份，零跨包依赖）——
-改基础类行为时**六个仓库都要同步改**，这是「自包含」换来的代价。
+改基础类行为时**七个仓库都要同步改**，这是「自包含」换来的代价。
 
 ### 公共骨架（每包一份副本）
 
@@ -247,6 +248,7 @@ cd mobkit && JAVA_HOME='D:\Java\jdk-25' ./gradlew shot --offline
 | 玩家破坏方块回调 | 直接当 ServerPlayer 用（参数是 `Player`） | `instanceof ServerPlayer sp` 过滤后再传 |
 | 实体标签存在性 | `EntityType` 静态常量（`LIGHTNING_BOLT` 等） | `BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse("minecraft:…"))` |
 | 掉落物生成 | 手动 `new ItemEntity` 后忘了延迟 | `setDefaultPickUpDelay()`；磁石类功能用 `hasPickUpDelay()` 豁免玩家丢弃 |
+| 给所有生物挂自定义 AI Goal | mixin 进 `registerGoals`（僵尸等大量生物覆写它且**不调 super**，基类方法体是空的、被虚调用短路，注入基类方法整类漏掉） | mixin 进 `Mob` **构造器 `<init>` TAIL**（只有一个构造器、必然执行，此时原版目标已注册完，追加不抢时序；yg-faces 验证过） |
 | 给玩家一个速度冲量（撑杆跳 / 击退式位移） | 只 `setDeltaMovement(...)` 就指望客户端跟上 | 再置 `hurtMarked = true` —— 广播 `ClientboundSetEntityMotionPacket` 的是 `ServerEntity#sendChanges()`，**不在 `ServerPlayer`/`ServerGamePacketListenerImpl` 里**（在那儿搜不到不代表机制不存在） |
 | 读玩家这一 tick 的位移（助跑速度） | `player.getDeltaMovement()`（服务端手上这份基本是空的） | `ServerPlayer#getKnownMovement()`（客户端上报的位移） |
 | 让附魔/物品只认某一种物品 | 指望铁砧拦（原版铁砧对附魔书**不做**兼容性检查） | 附魔 JSON 的 `supported_items` 指向自定义 tag（`data/<ns>/tags/item/<name>.json`），运行期再判一次物品；自检用 `Enchantment#canEnchant(ItemStack)` 正面钉死 |
@@ -308,7 +310,7 @@ JAR=$(cygpath -w "C:\Users\Y1116\.gradle\caches\fabric-loom\minecraftMaven\net\m
 - **`yg-mobs` 的外观要玩家也装**：苦力怕头身是纯客户端资源 + 渲染器
   （不装也能连服，爆炸照旧，只是看到原版幻翼外观）；
 - **建议装**：只为拿附魔 / 事件的中文翻译（语言文件随 jar 走）；
-- 六个包可以只发一个：每包自包含，不装其它包也能跑。
+- 七个包可以只发一个：每包自包含，不装其它包也能跑。
 
 ---
 

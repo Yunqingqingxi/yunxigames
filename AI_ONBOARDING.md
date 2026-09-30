@@ -13,13 +13,14 @@
 配置到「可运行 + 自检通过」，最后打包出可部署的 jar。请严格按下面的步骤执行，每步验证后再进下一步。
 
 【项目基本信息】
-- 系列是六个完全独立的 GitHub 仓库（全部公开，HTTPS 直接克隆，不需要权限邀请），按要接手的包选一个：
+- 系列是七个完全独立的 GitHub 仓库（全部公开，HTTPS 直接克隆，不需要权限邀请），按要接手的包选一个：
   - yg-random-drops（随机掉落，核心包）：https://github.com/Yunqingqingxi/yg-random-drops.git
   - yg-more-enchants（更多附魔）：https://github.com/Yunqingqingxi/yg-more-enchants.git
   - yg-world-events（事件/悬赏）：https://github.com/Yunqingqingxi/yg-world-events.git
   - yg-bingo（Bingo 集卡）：https://github.com/Yunqingqingxi/yg-bingo.git
   - yg-more-mobs（更多生物）：https://github.com/Yunqingqingxi/yg-more-mobs.git
   - yg-random-swap（随机换位）：https://github.com/Yunqingqingxi/yg-random-swap.git
+  - yg-faces（变脸）：https://github.com/Yunqingqingxi/yg-faces.git
 - 系列规范（公共约定 / API 踩坑速查 / 兼容承诺）在 https://github.com/Yunqingqingxi/yunxigames 的
   AGENTS.md —— 开工前必须先读它，以它的约定为准；mod 仓库里只有该包自己的 README/CHANGELOG
 - 主开发分支名是 26.2（跟随 MC 版本，不是 main）
