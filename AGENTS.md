@@ -24,7 +24,7 @@
 | Bingo | [yg-bingo](https://github.com/Yunqingqingxi/yg-bingo) | `yg_bingo` | `yg-bingo` | `config/yg-bingo.json` | 物品 / 击杀双板集卡，5×5 板画在地图上，连线发奖 |
 | 更多生物 | [yg-more-mobs](https://github.com/Yunqingqingxi/yg-more-mobs) | `yg_mobs` | `yg-mobs` | `config/yg-mobs.json` | 「苦力怕幻翼」：幻翼保留原生翅膀 / 尾巴 / 飞行姿态 / 眼睛层，头与躯干换成苦力怕；俯冲命中爆炸 + 俯冲开始播自定义音效 |
 | 随机换位 | [yg-random-swap](https://github.com/Yunqingqingxi/yg-random-swap) | `yg_swap` | `yg-swap` | `config/yg-swap.json` | 受伤随机互换位置：**玩家掉血就直接**与附近随机活体（生物或其他玩家）互换，无概率无来源判定；落点保护（岩浆/火跳过、清摔落、排除骑乘/盔甲架/Boss 黑名单），AFTER_DAMAGE 事件、零状态 |
-| 变脸 | [yg-faces](https://github.com/Yunqingqingxi/yg-faces) | `yg_faces` | `yg-faces` | `config/yg-faces.json` | 生物对玩家的态度由玩家主手实时决定：拿战斗用品（剑/斧/矛/三叉戟/重锤/弓/弩）全场掉头就跑，拿某生物的美食该生物不攻击还被诱惑跟着走（逐物种），其他任何东西（含空手）所有生物尝试攻击玩家（友好生物也装上攻击能力）；Mob 构造器注入、态度是主手物品的纯函数、零状态 |
+| 变脸 | [yg-faces](https://github.com/Yunqingqingxi/yg-faces) | `yg_faces` | `yg-faces` | `config/yg-faces.json` | 生物对玩家的态度由玩家主手实时决定：拿战斗用品（剑/斧/矛/三叉戟/重锤/弓/弩）全场掉头就跑，拿某生物的美食该生物不攻击还被诱惑跟着走（逐物种），其他任何东西（含空手）所有生物尝试攻击玩家（友好生物也装上攻击能力）；**末影人特殊**（1.2.0）：拿武器强制冷静（凝视/记仇全压住）、不拿武器没看眼睛也愤怒；Mob 构造器注入、态度是主手物品的纯函数、零状态 |
 
 - **本仓库不是 gradle 构建**：没有 `gradlew`，任何构建命令都在各 mod 仓库里跑。
 - **`yg-more-mobs` 里的 `mobkit/`**：生物外观预览工具（开发期专用，不发布）。它是**另一个独立 gradle 构建**
